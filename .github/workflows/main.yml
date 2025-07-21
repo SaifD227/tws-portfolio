@@ -1,0 +1,24 @@
+name: Portfolio Deployment    # Workflow ka naam
+
+on:                          # Trigger event
+  push:
+    branches:
+      - main                 # Sirf 'main' branch push par chalega
+
+jobs:                        # Workflow ke jobs
+  deploy:
+    runs-on: ubuntu-latest   # Kaunsa OS use hoga
+
+    steps:                   # Steps of job
+      - name: Checkout       # 1st step: code checkout
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials  # 2nd step: AWS credentials set karna
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Deploy static site to S3 bucket   # 3rd step: S3 me deploy
+        run: aws s3 sync . s3://bit-portfolio --delete
